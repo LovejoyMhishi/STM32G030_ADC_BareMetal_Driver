@@ -55,4 +55,33 @@ The driver manages critical ADC operations, assuming:
 - ADC channel selection via `ADC_CHSELR` (e.g., `CHSEL0` for PA0)  
 - Sampling time configuration through `ADC_SMPR`  
 - ADC clock prescaler setup using `ADC_CCR`  
-- Resolution and data alignment configuration via `ADC_CFGR1`  
+- Resolution and data alignment configuration via `ADC_CFGR1`
+
+## 🧪 Example Usage
+
+```c
+#include "adc.h"
+
+#define V_REF_plus 3.3f   // ADC reference voltage (V)
+#define R1 47.0f          // Voltage divider upper resistor (kΩ)
+#define R2 10.0f          // Voltage divider lower resistor (kΩ)
+
+int main(void)
+{
+    ADC1_Init();          // Initialize ADC peripheral
+    ADC1_Start();         // Start continuous conversion
+
+    while (1)
+    {
+        uint16_t adc_raw = ADC1_Read();
+
+        /*
+         * Convert ADC value to measured voltage
+         */
+        float VrefInt = (V_REF_plus * adc_raw / 4095.0f) * (R1 + R2) / R2;
+
+        /*
+         * VrefInt now holds the scaled input voltage
+         */
+    }
+}
