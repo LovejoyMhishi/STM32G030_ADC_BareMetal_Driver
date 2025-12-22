@@ -34,13 +34,17 @@
 
 
 
+/* ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
+/* 																											*/
+/*                                           INCLUDES                                                       */
+/*                                                                                  						*/
+/* ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
 #include "adc.h"
 #include "helpers.h"
 #include "stm32g030xx.h"
 #include "stdio.h"
 #include "main.h"
 #include <stdbool.h>
-
 
 /* ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
 /* 																											*/
@@ -54,13 +58,13 @@ void ADC1_Init(void) {
 	 */
 	SET_BIT(RCC->APBENR2,RCC_APBENR2_ADCEN);                      //Enable ADC peripheral clock
 
-	CLEAR_BIT(ADC1->CR, ADC_CR_ADEN);                             // ADC is disabled (OFF state)
-	CLEAR_BIT(ADC1->CFGR2, ADC_CFGR2_CKMODE );                    // CKMODE = 00
-	CLEAR_BIT(ADC->CCR, ADC_CCR_PRESC);                           // 000: Clear Prescaller Bits
-	SET_BIT(ADC->CCR, 0b0111<<ADC_CCR_PRESC_Pos);                 // 0111: Input ADC clock divided by 16
+	CLEAR_BIT(ADC1->CR, ADC_CR_ADEN);                             //ADC is disabled (OFF state)
+	CLEAR_BIT(ADC1->CFGR2, ADC_CFGR2_CKMODE );                    //CKMODE = 00
+	CLEAR_BIT(ADC->CCR, ADC_CCR_PRESC);                           //000: Clear Prescaller Bits
+	SET_BIT(ADC->CCR, 0b0111<<ADC_CCR_PRESC_Pos);                 //0111: Input ADC clock divided by 16
 
-	CLEAR_BIT(ADC1->CFGR1, ADC_CFGR1_RES);                        // 00: 12 bits Resolution
-	CLEAR_BIT(ADC1->CFGR1, ADC_CFGR1_ALIGN);                      // 0: Right alignment
+	CLEAR_BIT(ADC1->CFGR1, ADC_CFGR1_RES);                        //00: 12 bits Resolution
+	CLEAR_BIT(ADC1->CFGR1, ADC_CFGR1_ALIGN);                      //0: Right alignment
 
 	/*
 	 * 14.3.2: ADC voltage regulator Enabling(ADVREGEN)
@@ -89,37 +93,37 @@ void ADC1_Init(void) {
 	/*
 	 * 14.3.8: Channel selection (CHSEL, SCANDIR, CHSELRMOD)
 	 */
-	CLEAR_BIT(ADC1->CR, ADC_CR_ADSTART);                          // Ensures that no conversion is ongoing
+	CLEAR_BIT(ADC1->CR, ADC_CR_ADSTART);                          //Ensures that no conversion is ongoing
 
-	if(!(ADC1->ISR & ADC_ISR_CCRDY) ) {                           // Check ADC channel configuration ready flag
+	if(!(ADC1->ISR & ADC_ISR_CCRDY) ) {                           //Check ADC channel configuration ready flag
 		TimeOut(1);
 	}
 
 	if(ADC1->ISR & ADC_ISR_CCRDY) {
-		CLEAR_BIT(ADC1->CFGR1, ADC_CFGR1_CHSELRMOD);              // 0: Each bit of the ADC_CHSELR register enables an input
+		CLEAR_BIT(ADC1->CFGR1, ADC_CFGR1_CHSELRMOD);              //0: Each bit of the ADC_CHSELR register enables an input
 	}
 
-	SET_BIT(ADC1->CHSELR, ADC_CHSELR_CHSEL0);                     // ADC channel selection : PA0 -> Channel 0
+	SET_BIT(ADC1->CHSELR, ADC_CHSELR_CHSEL0);                     //ADC channel selection : PA0 -> Channel 0
 
 	/*
 	 *  14.3.9: Programmable sampling time (SMPx[2:0])
 	 */
 	CLEAR_BIT(ADC1->SMPR, ADC_SMPR_SMP1);
-	SET_BIT(ADC1->SMPR, ADC_SMPR_SMP1);                           // 111: 160.5 ADC clock cycles
+	SET_BIT(ADC1->SMPR, ADC_SMPR_SMP1);                           //111: 160.5 ADC clock cycles
 
 	/*
 	 * 14.3.10+11: Conversion modes (CONT = 0 & CONT = 1)
 	 */
-	SET_BIT(ADC1->CFGR1,ADC_CFGR1_CONT);                          // 1: Continuous conversion mode
+	SET_BIT(ADC1->CFGR1,ADC_CFGR1_CONT);                          //1: Continuous conversion mode
 
 
 	/*
 	 * 14.3.4: ADC on-off control (ADEN, ADDIS, ADRDY)
 	 */
-	CLEAR_BIT(ADC1->ISR, ADC_ISR_ADRDY);                          //  Clear the ADRDY bit in ADC_ISR register by programming this bit to 1.
+	CLEAR_BIT(ADC1->ISR, ADC_ISR_ADRDY);                          //Clear the ADRDY bit in ADC_ISR register by programming this bit to 1.
 	SET_BIT(ADC1->CR, ADC_CR_ADEN);                               //Set ADEN = 1 in the ADC_CR register.
 
-	while (!(ADC1->ISR & ADC_ISR_ADRDY)) {                        // Wait until ADRDY = 1 in the ADC_ISR register
+	while (!(ADC1->ISR & ADC_ISR_ADRDY)) {                        //Wait until ADRDY = 1 in the ADC_ISR register
 		/*
 		 * ⏳...
 		 */
@@ -144,9 +148,9 @@ void ADC1_Start(void) {
 
 uint16_t ADC1_Read(void){
 
-	while (!(ADC1->ISR & ADC_ISR_EOC));                           // Wait for end of conversion (EOC)
+	while (!(ADC1->ISR & ADC_ISR_EOC));                           //Wait for end of conversion (EOC)
 
-	return ADC1->DR;                                              // Read the value
+	return ADC1->DR;                                              //Read the value
 }
 
 
