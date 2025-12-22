@@ -21,7 +21,7 @@
  *   - To interface with GPIO outputs for simple decision-making based on ADC values.                       *
  *                                                                                                          *
  * Dependencies:                                                                                            *
- *   - CMSIS device headers (stm32g030xx.h) for register definitions.                                   *
+ *   - CMSIS device headers (stm32g030xx.h) for register definitions.                                       *
  *   - RCC clock configuration (system_init.c) to enable ADC peripheral clock.                              *
  *                                                                                                          *
  * Notes:                                                                                                   *
@@ -51,7 +51,12 @@
 /*                                           CONFIGURATIONS:                                                */
 /*                        CLOCK, RESOLUTION, DATA ALIGNMENT & NUMBER OF CONVERSION 							*/
 /* ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
+/* ────────────────────────────────────────────────────────────── /
+ * Function : ADC1_Init()
+ * Purpose  : Start an ADC1 conversion
+ * Details  : EN ADC, sets RES, channel, sampling, and CONT mode
+ * Runtime  : ~X.Xxx
+ * ────────────────────────────────────────────────────────────── */
 void ADC1_Init(void) {
 	/*
 	 * 14.3.5: ADC clock (CKMODE, PRESC[3:0])
@@ -136,6 +141,12 @@ void ADC1_Init(void) {
 /*                                           RUNTIME DATA ACQUISITION                                       */
 /*																										    */
 /* ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
+/* ────────────────────────────────────────────────────────────── /
+ * Function : ADC1_Start()
+ * Purpose  : Start an ADC1 conversion
+ * Details  : Sets ADSTART to begin single/ continuous conversions
+ * Runtime  : ~X.Xxx
+ * ────────────────────────────────────────────────────────────── */
 void ADC1_Start(void) {
 	/*
 	 *  14.3.12: Starting conversions (ADSTART)
@@ -145,7 +156,12 @@ void ADC1_Start(void) {
 
 }
 
-
+/* ────────────────────────────────────────────────────────────── /
+ * Function : ADC1_Read()
+ * Purpose  : Read ADC1 conversion result
+ * Details  : Returns ADC result after conversion
+ * Runtime  : ~X.Xxx
+ * ────────────────────────────────────────────────────────────── */
 uint16_t ADC1_Read(void){
 
 	while (!(ADC1->ISR & ADC_ISR_EOC));                           //Wait for end of conversion (EOC)
