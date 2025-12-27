@@ -23,9 +23,6 @@
 /* USER CODE BEGIN Includes */
 #include "adc.h"
 #include "dma.h"
-#include "gpio.h"
-#include "tim.h"
-#include "ui.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,23 +85,12 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  // ADC1_Init();
-  // DMA1_Init();
+  ADC1_Init();
+  DMA1_Init();
   GPIO_Init();
-  //GPIO_Writepin(GPIOA, LED_2, GPIO_PIN_SET);
-
-  GPIO_Writepin(GPIOA, LED_3, GPIO_PIN_SET);
-  TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-
-
-
-
-  //ADC_Start_DMA(ADC1, DMA1_Channel1, (uint32_t*)adc_buffer, 30);
-
-
-
+  ADC_Start_DMA(ADC1, DMA1_Channel1, (uint32_t*)adc_buffer, 30);
 
   /* USER CODE END 2 */
 
@@ -112,15 +98,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-	  ENZ_PASSED();
-
-	  TimeOut(6000);
-
-	  ENZ_FAILED();
-	  TimeOut(6000);
     /* USER CODE END WHILE */
-	// float VrefInt =  (V_REF_plus*ADC1_Read()/ 4095)*(47+10)/10;
+	
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -168,6 +147,12 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+void DMA1_Channel1_IRQHandler(void)
+{
+	if (DMA1->ISR & DMA_ISR_TCIF1) {      // Transfer Complete flag
+		DMA1->IFCR = DMA_IFCR_CTCIF1;     // Clear the flag
+
+		float VrefInt = (V_REF_plus * ADC1_Read() / 4095) * (47+10)/10;
 
 /* USER CODE END 4 */
 
@@ -202,3 +187,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
